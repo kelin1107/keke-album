@@ -7,95 +7,105 @@
 <script src="https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js"></script>
 <style>
   :root{
-    /* 对齐 PPTX 风格：A4 横版艺术画册，克制中性底让童画跳出来 */
-    --paper:#f6f5f0;       /* 暖白/奶油纸色 */
-    --paper-2:#edece5;
-    --ink:#1F1F1F;         /* 正文墨黑 */
-    --muted:#6e6b63;
-    --navy:#1F497D;        /* PPTX dk2 */
-    --accent:#F79646;      /* PPTX accent6 暖橘 */
-    --line:#d9d7cd;
-    --card:#ffffff;
-    --radius:10px;
-    --shadow:0 2px 10px rgba(0,0,0,.08);
+    --paper:#f6f5f0; --paper-2:#edece5; --ink:#1F1F1F; --muted:#6e6b63;
+    --navy:#1F497D; --accent:#F79646; --green:#2d8a6b; --red:#c05c5c; --line:#d9d7cd;
+    --card:#ffffff; --radius:14px; --shadow:0 2px 10px rgba(0,0,0,.08);
     --font:"PingFang SC","Hiragino Sans GB","Microsoft YaHei",system-ui,-apple-system,"Segoe UI",sans-serif;
     --font-en:"Georgia","Times New Roman",serif;
-    --font-ui:"Calibri","Helvetica Neue",Arial,sans-serif;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;padding:0;}
   body{font-family:var(--font);background:var(--paper);color:var(--ink);line-height:1.6;-webkit-text-size-adjust:100%;}
-  header{position:sticky;top:0;z-index:20;background:#fff;border-bottom:1px solid var(--line);padding:12px 16px;box-shadow:var(--shadow);}
-  header h1{margin:0;font-family:var(--font-ui);font-size:20px;font-weight:700;color:var(--navy);letter-spacing:.5px;}
-  header .sub{font-size:12px;color:var(--muted);margin-top:2px;font-family:var(--font-ui);}
-  .toolbar{display:flex;flex-wrap:wrap;gap:8px;padding:12px 14px;background:var(--paper-2);position:sticky;top:54px;z-index:19;border-bottom:1px solid var(--line);align-items:center;}
-  .btn{
-    border:none;border-radius:8px;padding:10px 14px;font-size:14px;font-family:var(--font-ui);
-    background:var(--card);color:var(--ink);box-shadow:var(--shadow);cursor:pointer;display:inline-flex;align-items:center;gap:6px;
-    transition:transform .08s ease,box-shadow .15s ease;
-  }
-  .btn:active{transform:scale(.96);}
-  .btn.primary{background:var(--navy);color:#fff;}
-  .btn.accent{background:var(--accent);color:#fff;}
-  .btn.ghost{background:transparent;box-shadow:none;border:1px solid var(--line);}
-  .btn.on{background:var(--navy);color:#fff;}
-  .chk{display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);white-space:nowrap;}
-  .filter{margin-left:auto;display:flex;gap:6px;align-items:center;font-size:13px;color:var(--muted);}
-  .filter select{border:1px solid var(--line);border-radius:8px;padding:7px 8px;font-family:var(--font);background:#fff;color:var(--ink);}
-
-  main{padding:14px;max-width:1100px;margin:0 auto;}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
-  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;display:flex;flex-direction:column;border:1px solid var(--line);}
-  .card .imgwrap{position:relative;aspect-ratio:4/3;background:var(--paper-2);display:flex;align-items:center;justify-content:center;overflow:hidden;}
-  .card .imgwrap img{width:100%;height:100%;object-fit:cover;display:block;}
-  .card .badge{position:absolute;top:10px;right:10px;font-size:12px;padding:4px 10px;border-radius:999px;font-weight:600;color:#fff;}
-  .badge.candidate{background:#9ca3af;}
-  .badge.selected{background:#2d8a6b;}
-  .badge.ignored{background:#c05c5c;opacity:.9;}
-  .card .body{padding:12px;display:flex;flex-direction:column;gap:8px;}
-  .card .date{font-size:12px;color:var(--muted);font-family:var(--font-ui);}
-  .pills{display:flex;gap:6px;}
-  .pill{flex:1;text-align:center;font-size:13px;padding:8px 4px;border-radius:8px;border:1px solid var(--line);background:#fff;cursor:pointer;color:var(--ink);font-family:var(--font-ui);}
-  .pill.on.candidate{background:#9ca3af;color:#fff;border-color:#9ca3af;}
-  .pill.on.selected{background:#2d8a6b;color:#fff;border-color:#2d8a6b;}
-  .pill.on.ignored{background:#c05c5c;color:#fff;border-color:#c05c5c;}
-  .card input[type="text"], .card textarea{
-    width:100%;border:1px solid var(--line);border-radius:8px;padding:10px;font-family:var(--font);font-size:14px;color:var(--ink);background:var(--paper);
-  }
-  .card input.en{font-family:var(--font-en);font-style:italic;color:#4a5568;}
-  .card textarea{resize:vertical;min-height:70px;line-height:1.6;}
-  .card input:focus,.card textarea:focus{outline:none;border-color:var(--navy);}
-  .card .analysis-label{font-size:12px;color:var(--muted);margin-top:2px;}
-  .card .analysis{min-height:90px;background:#faf9f4;}
-  .card .del{font-size:12px;color:#c05c5c;background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;}
-
-  .empty{text-align:center;color:var(--muted);padding:60px 20px;font-size:15px;}
-  .hint{font-size:12px;color:var(--muted);padding:0 14px 20px;max-width:1100px;margin:0 auto;line-height:1.7;}
-  .hint b{color:var(--navy);}
-
-  /* 策展视图：线上展厅 */
-  #curationView{display:none;background:var(--paper);padding:14px;max-width:1100px;margin:0 auto;}
+  /* 顶栏 */
+  header{position:sticky;top:0;z-index:30;background:#fff;border-bottom:1px solid var(--line);padding:10px 14px;box-shadow:var(--shadow);}
+  .topbar{display:flex;align-items:center;gap:10px;}
+  header h1{margin:0;font-size:19px;font-weight:800;color:var(--navy);}
+  header .sub{font-size:11px;color:var(--muted);margin-top:1px;}
+  .addBtn{margin-left:auto;border:none;border-radius:12px;padding:12px 18px;font-size:15px;font-weight:700;background:var(--navy);color:#fff;box-shadow:var(--shadow);cursor:pointer;white-space:nowrap;}
+  .addBtn:active{transform:scale(.96);}
+  .help{margin-left:8px;border:1px solid var(--line);background:#fff;border-radius:50%;width:34px;height:34px;font-size:16px;color:var(--muted);cursor:pointer;}
+  /* 引导条 */
+  .guide{margin:12px 14px 0;background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);border-radius:10px;padding:10px 12px;font-size:13px;color:var(--ink);display:flex;gap:8px;align-items:flex-start;}
+  .guide .x{margin-left:auto;color:var(--muted);font-size:16px;cursor:pointer;border:none;background:none;}
+  .guide b{color:var(--navy);}
+  /* 主区 */
+  main{padding:12px 14px 90px;max-width:760px;margin:0 auto;}
+  .grid{display:flex;flex-direction:column;gap:16px;}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;border:1px solid var(--line);}
+  .card .imgwrap{background:var(--paper-2);display:flex;align-items:center;justify-content:center;max-height:62vh;}
+  .card .imgwrap img{width:100%;max-height:62vh;object-fit:contain;display:block;}
+  .card .body{padding:12px;display:flex;flex-direction:column;gap:10px;}
+  .card .date{font-size:12px;color:var(--muted);}
+  .bigbtns{display:flex;gap:10px;}
+  .big{flex:1;border:none;border-radius:12px;padding:15px 8px;font-size:16px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;}
+  .big:active{transform:scale(.97);}
+  .big.yes{background:var(--green);color:#fff;}
+  .big.no{background:#fff;color:var(--muted);border:1px solid var(--line);}
+  .big.undo{background:#fff;color:var(--navy);border:1px solid var(--navy);}
+  .storetag{background:var(--green);color:#fff;border-radius:10px;padding:12px;font-size:15px;font-weight:700;text-align:center;}
+  .storetag small{display:block;font-weight:400;font-size:12px;opacity:.9;margin-top:3px;}
+  .story{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--font);font-size:15px;color:var(--ink);background:var(--paper);min-height:64px;line-height:1.6;resize:vertical;}
+  .story:focus{outline:none;border-color:var(--navy);}
+  .story-label{font-size:12px;color:var(--muted);}
+  .morelink{font-size:13px;color:var(--navy);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;}
+  .details{display:none;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:10px;margin-top:2px;}
+  .card.open .details{display:flex;}
+  .details input,.details textarea{width:100%;border:1px solid var(--line);border-radius:8px;padding:9px;font-family:var(--font);font-size:14px;background:#faf9f4;}
+  .details .en{font-family:var(--font-en);font-style:italic;color:#4a5568;}
+  .details textarea{resize:vertical;min-height:70px;}
+  .empty{text-align:center;color:var(--muted);padding:50px 20px;font-size:15px;}
+  .empty .big{display:inline-flex;margin-top:14px;padding:14px 22px;}
+  /* 我的书页 */
+  #book{display:none;}
+  .book-head{text-align:center;padding:6px 0 14px;}
+  .book-head h2{margin:0;font-size:20px;color:var(--navy);}
+  .book-head p{margin:4px 0 0;font-size:13px;color:var(--muted);}
+  .printBtn{display:block;width:100%;border:none;border-radius:14px;padding:18px;font-size:18px;font-weight:800;background:var(--accent);color:#fff;box-shadow:var(--shadow);cursor:pointer;}
+  .printBtn:active{transform:scale(.98);}
+  .booklist{display:flex;flex-direction:column;gap:12px;margin-top:14px;}
+  .bookitem{display:flex;gap:10px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px;align-items:center;}
+  .bookitem img{width:64px;height:64px;object-fit:cover;border-radius:8px;flex:none;background:var(--paper-2);}
+  .bookitem .t{font-size:14px;flex:1;min-width:0;}
+  .bookitem .t .ti{font-weight:600;color:var(--navy);}
+  .bookitem .t .st{font-size:12px;color:var(--muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+  .more{margin-top:18px;border-top:1px solid var(--line);padding-top:12px;}
+  .more summary{font-size:14px;color:var(--muted);cursor:pointer;list-style:none;}
+  .more summary::-webkit-details-marker{display:none;}
+  .more .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+  .mini{border:1px solid var(--line);background:#fff;border-radius:10px;padding:11px 14px;font-size:14px;color:var(--ink);cursor:pointer;flex:1;min-width:120px;text-align:center;}
+  .mini:active{transform:scale(.97);}
+  .chkrow{display:flex;align-items:center;gap:8px;font-size:14px;color:var(--ink);margin-top:12px;}
+  /* 打印弹层 */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:60;display:none;align-items:center;justify-content:center;padding:20px;}
+  .overlay.show{display:flex;}
+  .sheet{background:#fff;border-radius:16px;padding:22px;width:100%;max-width:360px;text-align:center;}
+  .sheet h3{margin:0 0 4px;color:var(--navy);font-size:18px;}
+  .sheet p{margin:0 0 16px;font-size:13px;color:var(--muted);}
+  .sheet .opt{display:block;width:100%;border:none;border-radius:12px;padding:16px;font-size:16px;font-weight:700;margin-bottom:10px;cursor:pointer;color:#fff;}
+  .sheet .opt.a{background:var(--navy);}
+  .sheet .opt.b{background:var(--green);}
+  .sheet .cancel{background:none;border:none;color:var(--muted);font-size:14px;margin-top:6px;cursor:pointer;}
+  /* 底部 Tab */
+  nav.bottom{position:fixed;bottom:0;left:0;right:0;z-index:30;display:flex;background:#fff;border-top:1px solid var(--line);box-shadow:0 -2px 10px rgba(0,0,0,.06);}
+  nav.bottom button{flex:1;border:none;background:none;padding:10px 0 12px;font-size:13px;color:var(--muted);cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;}
+  nav.bottom button .ic{font-size:20px;line-height:1;}
+  nav.bottom button.on{color:var(--navy);font-weight:700;}
+  /* 策展视图 */
+  #curationView{display:none;max-width:760px;margin:0 auto;padding:12px 14px 90px;}
   #curationView.active{display:block;}
-  .curation-list{display:flex;flex-direction:column;gap:28px;}
-  .curation-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);overflow:hidden;}
-  .curation-card .cimg{width:100%;display:block;background:var(--paper-2);}
-  .curation-card .cimg img{width:100%;height:auto;display:block;}
-  .curation-card .ccap{padding:18px 20px 22px;}
-  .curation-card .cen{font-family:var(--font-en);font-size:18px;font-style:italic;color:#5a5a5a;margin-bottom:4px;}
-  .curation-card .ctitle{font-size:24px;font-weight:700;color:var(--navy);margin-bottom:10px;}
-  .curation-card .canalysis{font-size:15px;line-height:1.9;color:var(--ink);margin-bottom:14px;padding-bottom:14px;border-bottom:1px dashed var(--line);}
+  .curation-card{background:#fff;border-radius:var(--radius);box-shadow:var(--shadow);border:1px solid var(--line);overflow:hidden;margin-bottom:22px;}
+  .curation-card img{width:100%;display:block;background:var(--paper-2);}
+  .curation-card .ccap{padding:16px 18px 20px;}
+  .curation-card .cen{font-family:var(--font-en);font-size:17px;font-style:italic;color:#5a5a5a;margin-bottom:4px;}
+  .curation-card .ctitle{font-size:22px;font-weight:700;color:var(--navy);margin-bottom:10px;}
+  .curation-card .canalysis{font-size:14px;line-height:1.9;color:var(--ink);margin-bottom:12px;padding-bottom:12px;border-bottom:1px dashed var(--line);}
   .curation-card .cstory{font-size:15px;line-height:1.8;color:#4a4a4a;background:var(--paper);padding:12px 14px;border-radius:8px;}
   .curation-card .cstory::before{content:"可可的故事：";font-weight:700;color:var(--navy);}
-
-  /* 打印区：A4 横版艺术画册 */
+  /* 打印 */
   #printArea{display:none;background:#fff;}
   .print-area{column-count:1;column-gap:0;}
   .print-area.booklet{column-count:2;column-gap:0;}
-  .print-page{
-    width:297mm;height:210mm;padding:16mm;position:relative;
-    display:flex;gap:12mm;align-items:center;break-inside:avoid;box-sizing:border-box;
-    background:#fff;border-bottom:1px solid #eee;
-  }
+  .print-page{width:297mm;height:210mm;padding:16mm;position:relative;display:flex;gap:12mm;align-items:center;break-inside:avoid;box-sizing:border-box;background:#fff;border-bottom:1px solid #eee;}
   .print-area.booklet .print-page{width:148.5mm;height:210mm;padding:10mm;flex-direction:column;gap:6mm;justify-content:center;}
   .print-img{flex:0 0 58%;height:100%;display:flex;align-items:center;justify-content:center;}
   .print-area.booklet .print-img{flex:none;width:100%;height:55%;}
@@ -106,12 +116,10 @@
   .print-analysis{font-size:13px;line-height:1.85;color:#555;margin-bottom:12px;padding-left:12px;border-left:3px solid var(--accent);}
   .print-story{font-size:15px;line-height:1.9;color:var(--ink);white-space:pre-wrap;}
   .print-story .muted{color:#b0b0b0;}
-  .print-foot{position:absolute;bottom:12mm;right:16mm;font-size:11px;color:#aaa;font-family:var(--font-ui);}
-  .print-area.booklet .print-foot{bottom:8mm;right:10mm;}
+  .print-foot{position:absolute;bottom:12mm;right:16mm;font-size:11px;color:#aaa;}
   .print-headbook{position:absolute;top:12mm;left:16mm;font-size:12px;font-family:var(--font-en);font-style:italic;color:#aaa;}
-
   @media print{
-    header,.toolbar,main,.hint,#curationView{display:none !important;}
+    header,nav.bottom,.guide,main,#book,#curationView{display:none !important;}
     body{background:#fff;}
     #printArea{display:block !important;}
     @page{size:A4 landscape;margin:0;}
@@ -122,40 +130,50 @@
 </head>
 <body>
 <header>
-  <h1>可可的书 · Coco's Book</h1>
-  <div class="sub">A4 横版艺术画册 · 她的画 + 她讲的故事 · 线上策展</div>
+  <div class="topbar">
+    <div>
+      <h1>🐰 可可的书</h1>
+      <div class="sub">她的画 · 她讲的故事</div>
+    </div>
+    <button class="addBtn" id="addBtn">➕ 加一张</button>
+    <button class="help" id="helpBtn" title="怎么用">?</button>
+  </div>
 </header>
 
-<div class="toolbar">
-  <button class="btn primary" id="addBtn">➕ 加新作品</button>
-  <button class="btn accent" id="printBtn">🖨 打印（横版A4）</button>
-  <button class="btn" id="bookletBtn">📒 小册子</button>
-  <button class="btn ghost" id="viewBtn">🔍 策展视图</button>
-  <button class="btn ghost" id="exportBtn">⬇ 导出</button>
-  <button class="btn ghost" id="importBtn">⬆ 导入</button>
-  <label class="chk"><input type="checkbox" id="curationChk"> 含策展文案</label>
-  <label class="chk"><input type="checkbox" id="enhanceChk" checked> 自动修正光线</label>
-  <div class="filter">
-    显示
-    <select id="filterSel">
-      <option value="all">全部</option>
-      <option value="candidate">候选</option>
-      <option value="selected">入选</option>
-      <option value="ignored">忽略</option>
-    </select>
-  </div>
+<div class="guide" id="guide">
+  <div>① 点 <b>➕ 加一张</b> 选可可的画（手机 HEIC 也行，自动修光） → ② 她喜欢就点 <b>❤️ 收进书里</b>、不喜欢点 <b>不要</b> → ③ 写下 <b>可可讲的故事</b> → ④ 去底部「📖 我的书」打印成册。</div>
+  <button class="x" id="guideX">×</button>
 </div>
 
-<main>
+<main id="home">
   <div class="grid" id="gallery"></div>
-  <div class="empty" id="emptyTip" style="display:none;">还没有作品～ 点「➕ 加新作品」从手机相册选一张可可的画，或点「⬆ 导入」加载布布老师给的策展 JSON。</div>
+  <div class="empty" id="emptyTip" style="display:none;">
+    还没有作品～<br>点右上角「➕ 加一张」从手机相册选一张可可的画吧。
+  </div>
 </main>
-<div class="hint">
-  <b>流程：</b>① 点「➕ 加新作品」选图（支持 iPhone HEIC，会自动转成 JPG 并修正光线）；② 拿手机给可可看，她喜欢的点「入选」，填写她讲的故事；③ 点「打印」输出横版 A4（一幅一页），或「小册子」一页两幅对折成书；④ 需要英文策展标题与解析时，把图发给我，我生成后你粘贴到对应框里。所有数据存在本机浏览器。
+
+<div id="book">
+  <main style="padding-top:8px;">
+    <div class="book-head">
+      <h2>📖 我的书</h2>
+      <p id="bookCount">已收进 0 张</p>
+    </div>
+    <button class="printBtn" id="printBtn">🖨 打印这本书</button>
+    <div class="booklist" id="bookList"></div>
+    <details class="more">
+      <summary>更多（策展展示 · 备份 · 高级）</summary>
+      <div class="row">
+        <button class="mini" id="viewBtn">🔍 线上展厅</button>
+        <button class="mini" id="exportBtn">⬇ 备份</button>
+        <button class="mini" id="importBtn">⬆ 导入</button>
+      </div>
+      <label class="chkrow"><input type="checkbox" id="curationChk"> 打印时包含「英文策展标题 + 解析」</label>
+    </details>
+  </main>
 </div>
 
 <div id="curationView">
-  <div class="curation-list" id="curationList"></div>
+  <div id="curationList"></div>
 </div>
 
 <div id="printArea" class="print-area"></div>
@@ -163,61 +181,90 @@
 <input type="file" id="fileInput" accept="image/*" multiple hidden />
 <input type="file" id="importInput" accept="application/json" hidden />
 
+<!-- 打印选择弹层 -->
+<div class="overlay" id="printOverlay">
+  <div class="sheet">
+    <h3>打印这本书</h3>
+    <p id="printCountTip">共 0 张入选作品</p>
+    <button class="opt a" id="optA4">📄 横版 A4（一幅一页）</button>
+    <button class="opt b" id="optBook">📒 小册子（一页两幅 · 对折成书）</button>
+    <button class="cancel" id="printCancel">取消</button>
+  </div>
+</div>
+
+<!-- 帮助弹层 -->
+<div class="overlay" id="helpOverlay">
+  <div class="sheet" style="text-align:left;">
+    <h3 style="text-align:center;">怎么用 🐰</h3>
+    <p style="text-align:left;line-height:1.9;">
+      1. 点右上角 <b>➕ 加一张</b>，从手机选可可的画（iPhone 的 HEIC 会自动转，光线也会自动修）。<br>
+      2. 图出来后给可可看：喜欢就点 <b>❤️ 收进书里</b>，不喜欢点 <b>不要</b>。<br>
+      3. 在「她讲的故事」框里，照她说的写下来（跟画对不对得上都行）。<br>
+      4. 想加英文标题/策展解析，点卡片上的「✎ 标题/策展」展开即可。<br>
+      5. 底部切到「📖 我的书」，点 <b>打印这本书</b> 选横版或小册子。
+    </p>
+    <button class="cancel" id="helpClose" style="color:var(--navy);font-weight:700;">知道啦</button>
+  </div>
+</div>
+
 <script>
 (function(){
   const KEY="keke-album-v2";
   const PLACEHOLDER="data:image/svg+xml;utf8,"+encodeURIComponent("<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='100%' height='100%' fill='%23f3f2ed'/><text x='50%' y='50%' font-size='20' fill='%23999' text-anchor='middle' dominant-baseline='middle'>可可的作品</text></svg>");
-
   const SEED={ items:[
-    {id:"s1",img:PLACEHOLDER,date:"2026-08-10",status:"candidate",title:"",enTitle:"",story:"",analysis:"",note:""},
-    {id:"s2",img:PLACEHOLDER,date:"2026-08-11",status:"candidate",title:"",enTitle:"",story:"",analysis:"",note:""}
+    {id:"s1",img:PLACEHOLDER,date:"2026-08-10",status:"new",title:"",enTitle:"",story:"",analysis:"",note:""},
+    {id:"s2",img:PLACEHOLDER,date:"2026-08-11",status:"new",title:"",enTitle:"",story:"",analysis:"",note:""}
   ]};
-
   let items=load();
-  let filter="all";
   let curationMode=false;
 
-  function load(){
-    try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r).items||SEED.items;}catch(e){}
-    return JSON.parse(JSON.stringify(SEED.items));
-  }
+  function load(){try{const r=localStorage.getItem(KEY);if(r)return JSON.parse(r).items||SEED.items;}catch(e){}return JSON.parse(JSON.stringify(SEED.items));}
   function save(){localStorage.setItem(KEY,JSON.stringify({items}));}
   function today(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");}
   function esc(s){return (s||"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c]));}
+  function st(i){return i.status==="candidate"?"new":i.status;} // 兼容旧数据
   function isHeic(f){return /image\/heic|image\/heif/i.test(f.type) || /\.heic$/i.test(f.name);}
 
   const gallery=document.getElementById("gallery");
   const emptyTip=document.getElementById("emptyTip");
-  const filterSel=document.getElementById("filterSel");
-  const enhanceChk=document.getElementById("enhanceChk");
+  const bookList=document.getElementById("bookList");
+  const bookCount=document.getElementById("bookCount");
   const curationChk=document.getElementById("curationChk");
   const curationView=document.getElementById("curationView");
   const curationList=document.getElementById("curationList");
-  const viewBtn=document.getElementById("viewBtn");
 
+  // ---------- 画廊（首页）----------
   function render(){
-    const list=items.filter(i=>filter==="all"||i.status===filter);
-    gallery.innerHTML=list.map(i=>`
-      <div class="card" data-id="${i.id}">
-        <div class="imgwrap">
-          <img src="${i.img||PLACEHOLDER}" alt="可可的作品">
-          <span class="badge ${i.status}">${i.status==="selected"?"入选":i.status==="ignored"?"忽略":"候选"}</span>
-        </div>
+    const list=items.filter(i=>st(i)==="new"||st(i)==="selected");
+    list.sort((a,b)=> (a.date<b.date?1:-1)); // 新的在上
+    gallery.innerHTML=list.map(i=>{
+      const selected=st(i)==="selected";
+      const action = selected
+        ? `<div class="storetag">✅ 已收进书里<small>点「改主意」可退回 / 不要</small></div>
+           <div class="bigbtns" style="margin-top:8px;">
+             <button class="big undo" data-act="undo" data-id="${i.id}">改主意</button>
+             <button class="big no" data-act="ignore" data-id="${i.id}">不要</button>
+           </div>`
+        : `<div class="bigbtns">
+             <button class="big yes" data-act="select" data-id="${i.id}">❤️ 收进书里</button>
+             <button class="big no" data-act="ignore" data-id="${i.id}">不要</button>
+           </div>`;
+      return `<div class="card" data-id="${i.id}">
+        <div class="imgwrap"><img src="${i.img||PLACEHOLDER}" alt="可可的作品"></div>
         <div class="body">
           <div class="date">📅 ${i.date}</div>
-          <div class="pills">
-            <div class="pill candidate ${i.status==="candidate"?"on":""}" data-st="candidate">候选</div>
-            <div class="pill selected ${i.status==="selected"?"on":""}" data-st="selected">入选</div>
-            <div class="pill ignored ${i.status==="ignored"?"on":""}" data-st="ignored">忽略</div>
+          ${action}
+          <div class="story-label">可可讲的故事（照她说的写，跟画对不对得上都行）</div>
+          <textarea class="story" data-id="${i.id}" placeholder="可可说…">${esc(i.story)}</textarea>
+          <button class="morelink" data-toggle="${i.id}">✎ 加标题 / 策展解析</button>
+          <div class="details" data-details="${i.id}">
+            <input type="text" class="d-title" placeholder="中文标题（可选）" value="${esc(i.title)}">
+            <input type="text" class="d-en en" placeholder="English curatorial title" value="${esc(i.enTitle)}">
+            <textarea class="d-analysis" placeholder="从策展角度解析这幅画（线上展厅/打印用）">${esc(i.analysis)}</textarea>
           </div>
-          <input type="text" class="title" placeholder="中文标题（可选）" value="${esc(i.title)}">
-          <input type="text" class="en" placeholder="English curatorial title" value="${esc(i.enTitle)}">
-          <textarea class="story" placeholder="她讲的故事…（入选后会印进书里）">${esc(i.story)}</textarea>
-          <div class="analysis-label">🖼 策展解析（线上展示用）</div>
-          <textarea class="analysis" placeholder="从策展角度解析这幅画…可粘贴布布老师给的文案">${esc(i.analysis)}</textarea>
-          <button class="del">删除这张</button>
         </div>
-      </div>`).join("");
+      </div>`;
+    }).join("");
     emptyTip.style.display=list.length?"none":"block";
     bindCards();
     if(curationMode) buildCuration();
@@ -227,86 +274,101 @@
     gallery.querySelectorAll(".card").forEach(card=>{
       const id=card.dataset.id;
       const it=items.find(x=>x.id===id);
-      card.querySelectorAll(".pill").forEach(p=>p.onclick=()=>{it.status=p.dataset.st;save();render();});
-      const title=card.querySelector(".title");
-      title.oninput=()=>{it.title=title.value;debouncedSave();};
-      const en=card.querySelector(".en");
-      en.oninput=()=>{it.enTitle=en.value;debouncedSave();};
+      card.querySelectorAll("[data-act]").forEach(b=>b.onclick=()=>{
+        const a=b.dataset.act;
+        if(a==="select"){it.status="selected";save();render();focusStory(id);}
+        else if(a==="ignore"){it.status="ignored";save();render();}
+        else if(a==="undo"){it.status="new";save();render();}
+      });
       const ta=card.querySelector(".story");
       ta.oninput=()=>{it.story=ta.value;debouncedSave();};
-      const an=card.querySelector(".analysis");
-      an.oninput=()=>{it.analysis=an.value;debouncedSave();};
-      card.querySelector(".del").onclick=()=>{if(confirm("确定删除这张作品？")){items=items.filter(x=>x.id!==id);save();render();}};
+      card.querySelector("[data-toggle]").onclick=()=>card.classList.toggle("open");
+      const t=card.querySelector(".d-title"); t.oninput=()=>{it.title=t.value;debouncedSave();};
+      const e=card.querySelector(".d-en"); e.oninput=()=>{it.enTitle=e.value;debouncedSave();};
+      const an=card.querySelector(".d-analysis"); an.oninput=()=>{it.analysis=an.value;debouncedSave();};
     });
   }
+  function focusStory(id){setTimeout(()=>{const c=gallery.querySelector(`.card[data-id="${id}"] .story`);if(c){c.focus();c.scrollIntoView({behavior:"smooth",block:"center"});}},60);}
   let t;function debouncedSave(){clearTimeout(t);t=setTimeout(save,400);}
 
-  // HEIC 转换
+  // ---------- 我的书 ----------
+  function renderBook(){
+    const sel=items.filter(i=>st(i)==="selected").sort((a,b)=>a.date.localeCompare(b.date));
+    bookCount.textContent="已收进 "+sel.length+" 张";
+    document.getElementById("printCountTip").textContent="共 "+sel.length+" 张入选作品";
+    bookList.innerHTML=sel.length?sel.map(i=>`
+      <div class="bookitem">
+        <img src="${i.img||PLACEHOLDER}">
+        <div class="t">
+          <div class="ti">${i.title?esc(i.title):"（未起名）"}</div>
+          <div class="st">${i.story?esc(i.story).slice(0,40):"（还没写故事）"}</div>
+        </div>
+      </div>`).join(""):'<div class="empty">还没有收进书里的作品～<br>去「画册」点 ❤️ 收进书里 吧。</div>';
+  }
+
+  // ---------- 页面切换 ----------
+  function show(page){
+    const home=document.getElementById("home"), book=document.getElementById("book");
+    document.querySelectorAll("nav.bottom button").forEach(b=>b.classList.toggle("on",b.dataset.page===page));
+    if(page==="book"){home.style.display="none";book.style.display="block";curationView.classList.remove("active");curationMode=false;renderBook();window.scrollTo(0,0);}
+    else{home.style.display="block";book.style.display="none";curationView.classList.remove("active");curationMode=false;render();window.scrollTo(0,0);}
+  }
+
+  // ---------- 加图 ----------
   async function convertHeic(file){
-    if(typeof heic2any==="undefined"){throw new Error("heic2any 库未加载（请保持联网）");}
+    if(typeof heic2any==="undefined"){throw new Error("HEIC 库未加载（请保持联网）");}
     const r=await heic2any({blob:file,toType:"image/jpeg",quality:0.9});
     const blob=Array.isArray(r)?r[0]:r;
     return new File([blob],file.name.replace(/\.heic$/i,".jpg"),{type:"image/jpeg"});
   }
-
-  // 自适应光线修正
   function processImage(file, cb){
     const reader=new FileReader();
     reader.onload=ev=>{
       const img=new Image();
       img.onload=()=>{
-        const max=1400;
-        let w=img.width,h=img.height;
+        const max=1400;let w=img.width,h=img.height;
         if(w>max||h>max){const r=max/Math.max(w,h);w=Math.round(w*r);h=Math.round(h*r);}
         const c=document.createElement("canvas");c.width=w;c.height=h;
         const ctx=c.getContext("2d");
-        if(enhanceChk.checked){
-          const st=64,tmp=document.createElement("canvas");tmp.width=st;tmp.height=st;
-          const t=tmp.getContext("2d");t.drawImage(img,0,0,st,st);
-          const d=t.getImageData(0,0,st,st).data;
-          let sum=0,n=d.length/4,min=255,max=0;
-          for(let i=0;i<d.length;i+=4){const l=(d[i]+d[i+1]+d[i+2])/3;sum+=l;min=Math.min(min,l);max=Math.max(max,l);}
-          const mean=sum/n; const range=max-min;
-          let b=mean<110?1+0.35*(110-mean)/110 : mean>180?1-0.15*(mean-180)/75 : 1;
-          let ct=range<55?1+0.35*(55-range)/55 : 1;
-          b=Math.max(0.85,Math.min(1.4,b)); ct=Math.max(1,Math.min(1.45,ct));
-          ctx.filter=`brightness(${b}) contrast(${ct}) saturate(1.08)`;
-        }
-        ctx.drawImage(img,0,0,w,h);
-        ctx.filter="none";
+        const stt=64,tmp=document.createElement("canvas");tmp.width=stt;tmp.height=stt;
+        const tt=tmp.getContext("2d");tt.drawImage(img,0,0,stt,stt);
+        const d=tt.getImageData(0,0,stt,stt).data;
+        let sum=0,n=d.length/4,min=255,max=0;
+        for(let i=0;i<d.length;i+=4){const l=(d[i]+d[i+1]+d[i+2])/3;sum+=l;min=Math.min(min,l);max=Math.max(max,l);}
+        const mean=sum/n,range=max-min;
+        let b=mean<110?1+0.35*(110-mean)/110:mean>180?1-0.15*(mean-180)/75:1;
+        let ct=range<55?1+0.35*(55-range)/55:1;
+        b=Math.max(0.85,Math.min(1.4,b));ct=Math.max(1,Math.min(1.45,ct));
+        ctx.filter=`brightness(${b}) contrast(${ct}) saturate(1.08)`;
+        ctx.drawImage(img,0,0,w,h);ctx.filter="none";
         cb(c.toDataURL("image/jpeg",0.88));
       };
       img.src=ev.target.result;
     };
     reader.readAsDataURL(file);
   }
-
   async function addFiles(files){
-    const list=[...files];
-    for(const file of list){
+    for(const file of [...files]){
       let f=file;
-      if(isHeic(f)){
-        try{f=await convertHeic(f);}catch(e){alert("HEIC 转换失败："+e.message); continue;}
-      }
+      if(isHeic(f)){try{f=await convertHeic(f);}catch(e){alert("HEIC 转换失败："+e.message);continue;}}
       processImage(f,data=>{
-        items.unshift({id:"i"+Date.now()+Math.random().toString(36).slice(2,6),img:data,date:today(),status:"candidate",title:"",enTitle:"",story:"",analysis:"",note:""});
-        save();render();
+        items.unshift({id:"i"+Date.now()+Math.random().toString(36).slice(2,6),img:data,date:today(),status:"new",title:"",enTitle:"",story:"",analysis:"",note:""});
+        save();
       });
     }
     document.getElementById("fileInput").value="";
+    render();
   }
-
   document.getElementById("addBtn").onclick=()=>document.getElementById("fileInput").click();
   document.getElementById("fileInput").onchange=e=>addFiles(e.target.files);
-  filterSel.onchange=()=>{filter=filterSel.value;render();};
 
-  // 策展视图
+  // ---------- 策展视图 ----------
   function buildCuration(){
-    const sel=items.filter(i=>i.status!=="ignored").sort((a,b)=>a.date.localeCompare(b.date));
+    const sel=items.filter(i=>st(i)!=="ignored").sort((a,b)=>a.date.localeCompare(b.date));
     if(!sel.length){curationList.innerHTML='<div class="empty">没有可展示的作品～</div>';return;}
     curationList.innerHTML=sel.map(i=>`
       <div class="curation-card">
-        <div class="cimg"><img src="${i.img||PLACEHOLDER}" alt=""></div>
+        <img src="${i.img||PLACEHOLDER}" alt="">
         <div class="ccap">
           ${i.enTitle?`<div class="cen">${esc(i.enTitle)}</div>`:''}
           ${i.title?`<div class="ctitle">${esc(i.title)}</div>`:''}
@@ -315,22 +377,16 @@
         </div>
       </div>`).join("");
   }
-  viewBtn.onclick=()=>{
-    curationMode=!curationMode;
-    viewBtn.classList.toggle("on",curationMode);
-    viewBtn.textContent=curationMode?"📋 编辑视图":"🔍 策展视图";
-    document.querySelector("main").style.display=curationMode?"none":"block";
-    document.querySelector(".hint").style.display=curationMode?"none":"block";
-    curationView.classList.toggle("active",curationMode);
-    if(curationMode) buildCuration();
-    window.scrollTo(0,0);
+  document.getElementById("viewBtn").onclick=()=>{
+    curationMode=true;document.getElementById("home").style.display="none";document.getElementById("book").style.display="none";
+    curationView.classList.add("active");buildCuration();window.scrollTo(0,0);
   };
 
-  // 打印
+  // ---------- 打印 ----------
   const printArea=document.getElementById("printArea");
   function buildPrint(booklet){
-    const sel=items.filter(i=>i.status==="selected").sort((a,b)=>a.date.localeCompare(b.date));
-    if(!sel.length){alert("还没有「入选」的作品哦～ 先在卡片上点「入选");return false;}
+    const sel=items.filter(i=>st(i)==="selected").sort((a,b)=>a.date.localeCompare(b.date));
+    if(!sel.length){alert("还没有「收进书里」的作品哦～ 先去「画册」点 ❤️ 收进书里");return false;}
     const includeC=curationChk.checked;
     printArea.className="print-area"+(booklet?" booklet":"");
     printArea.innerHTML=sel.map((i,idx)=>`
@@ -349,27 +405,47 @@
   }
   function doPrint(booklet){
     if(!buildPrint(booklet))return;
-    window.onafterprint=()=>{window.location.reload();};
+    document.getElementById("printOverlay").classList.remove("show");
+    window.onafterprint=()=>window.location.reload();
     window.print();
   }
-  document.getElementById("printBtn").onclick=()=>doPrint(false);
-  document.getElementById("bookletBtn").onclick=()=>doPrint(true);
+  document.getElementById("printBtn").onclick=()=>{
+    const n=items.filter(i=>st(i)==="selected").length;
+    document.getElementById("printCountTip").textContent="共 "+n+" 张入选作品";
+    document.getElementById("printOverlay").classList.add("show");
+  };
+  document.getElementById("optA4").onclick=()=>doPrint(false);
+  document.getElementById("optBook").onclick=()=>doPrint(true);
+  document.getElementById("printCancel").onclick=()=>document.getElementById("printOverlay").classList.remove("show");
 
-  // 导出/导入
+  // ---------- 导出/导入 ----------
   document.getElementById("exportBtn").onclick=()=>{
     const blob=new Blob([JSON.stringify({items},null,2)],{type:"application/json"});
-    const a=document.createElement("a");a.href=URL.createObjectURL(blob);
-    a.download="可可的书_"+today()+".json";a.click();
+    const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="可可的书_"+today()+".json";a.click();
   };
   document.getElementById("importBtn").onclick=()=>document.getElementById("importInput").click();
   document.getElementById("importInput").onchange=e=>{
     const f=e.target.files[0];if(!f)return;
-    const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.items){items=d.items;save();render();alert("导入成功！");}}catch(err){alert("文件格式不对～");}};
+    const r=new FileReader();r.onload=ev=>{try{const d=JSON.parse(ev.target.result);if(d.items){items=d.items;save();render();renderBook();alert("导入成功！");}}catch(err){alert("文件格式不对～");}};
     r.readAsText(f);e.target.value="";
   };
+
+  // ---------- 引导/帮助 ----------
+  if(localStorage.getItem("keke-album-seen")){document.getElementById("guide").style.display="none";}
+  document.getElementById("guideX").onclick=()=>{document.getElementById("guide").style.display="none";localStorage.setItem("keke-album-seen","1");};
+  document.getElementById("helpBtn").onclick=()=>document.getElementById("helpOverlay").classList.add("show");
+  document.getElementById("helpClose").onclick=()=>document.getElementById("helpOverlay").classList.remove("show");
+
+  // 底部 Tab
+  document.querySelectorAll("nav.bottom button").forEach(b=>b.onclick=()=>show(b.dataset.page));
 
   render();
 })();
 </script>
+
+<nav class="bottom">
+  <button data-page="home" class="on"><span class="ic">🖼</span>画册</button>
+  <button data-page="book"><span class="ic">📖</span>我的书</button>
+</nav>
 </body>
 </html>
