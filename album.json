@@ -1,0 +1,30 @@
+{
+  "meta": {
+    "title": "可可的书 · Coco's Book",
+    "subtitle": "她的画 + 她讲的故事 + 线上策展 · A4 横版艺术画册",
+    "style": "对齐现有 PPTX 可可画册.pptx：A4 横版、大幅作品图、克制中性底（奶油纸色 #f6f5f0 / 藏青标题 #1F497D）、双语标题（英文斜体 + 中文标题）+ 孩子口述故事 + 可选策展解析",
+    "owner": "可可（3-4岁）",
+    "updated": "2026-08-12",
+    "curationPrompt": "从策展的角度来看这幅画，但不要过于抽象",
+    "note": "本文件是布布老师维护的『真相源』。家长在 index.html 里筛选/打字后，可把结果贴给布布老师，由老师把最终入选作品+故事+策展解析烘焙进此处，并据此产出统一风格的打印稿。"
+  },
+  "items": [
+    {
+      "id": "s1",
+      "img": "（由家长在 app 上传 / 或发图给布布老师）",
+      "date": "2026-08-10",
+      "status": "candidate",
+      "title": "（中文标题，可选）",
+      "enTitle": "(English curatorial title, 由布布老师生成)",
+      "story": "（可可讲的故事，由家长录入）",
+      "analysis": "（策展解析，由布布老师按 prompt '从策展的角度来看这幅画，但不要过于抽象' 生成）",
+      "note": ""
+    }
+  ],
+  "print": {
+    "mode": "landscape-a4 | booklet",
+    "onlySelected": true,
+    "includeCuration": false,
+    "styleConsistentWith": "C:/Users/kitekreek/Downloads/可可画册.pptx（已解包提取配色/字体/A4横版尺寸）"
+  }
+}
