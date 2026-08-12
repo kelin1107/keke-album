@@ -166,13 +166,12 @@
     <button class="printBtn" id="printBtn">🖨 打印这本书</button>
     <div class="booklist" id="bookList"></div>
     <details class="more">
-      <summary>更多（策展展示 · 备份 · 高级）</summary>
+      <summary>更多（展厅 · 备份 · 导入）</summary>
       <div class="row">
         <button class="mini" id="viewBtn">🔍 线上展厅</button>
         <button class="mini" id="exportBtn">⬇ 备份</button>
         <button class="mini" id="importBtn">⬆ 导入</button>
       </div>
-      <label class="chkrow"><input type="checkbox" id="curationChk"> 打印时包含「英文策展标题 + 解析」</label>
     </details>
   </main>
 </div>
@@ -205,12 +204,16 @@
       1. 点右上角 <b>➕ 加一张</b>，从手机选可可的画（iPhone 的 HEIC 会自动转，光线也会自动修）。<br>
       2. 图出来后给可可看：喜欢就点 <b>❤️ 收进书里</b>，不喜欢点 <b>不要</b>。<br>
       3. 在「她讲的故事」框里，照她说的写下来（跟画对不对得上都行）。<br>
-      4. 想加英文标题/策展解析，点卡片上的「✎ 标题/策展」展开即可。<br>
-      5. 底部切到「📖 我的书」，点 <b>打印这本书</b> 选横版或小册子。
+      4. 底部切到「📖 我的书」，点 <b>打印这本书</b> 选横版或小册子。
     </p>
     <button class="cancel" id="helpClose" style="color:var(--navy);font-weight:700;">知道啦</button>
   </div>
 </div>
+
+<nav class="bottom">
+  <button data-page="home" class="on"><span class="ic">🖼</span>画册</button>
+  <button data-page="book"><span class="ic">📖</span>我的书</button>
+</nav>
 
 <!-- 关键修复：脚本移到所有 DOM（含底部 nav）之后，确保元素已解析再绑定 -->
 <script>
@@ -241,7 +244,6 @@
     const emptyTip=document.getElementById("emptyTip");
     const bookList=document.getElementById("bookList");
     const bookCount=document.getElementById("bookCount");
-    const curationChk=document.getElementById("curationChk");
     const curationView=document.getElementById("curationView");
     const curationList=document.getElementById("curationList");
     const printArea=document.getElementById("printArea");
@@ -269,12 +271,6 @@
             ${action}
             <div class="story-label">可可讲的故事（照她说的写，跟画对不对得上都行）</div>
             <textarea class="story" data-id="${i.id}" placeholder="可可说…">${esc(i.story)}</textarea>
-            <button class="morelink" data-toggle="${i.id}">✎ 加标题 / 策展解析</button>
-            <div class="details" data-details="${i.id}">
-              <input type="text" class="d-title" placeholder="中文标题（可选）" value="${esc(i.title)}">
-              <input type="text" class="d-en en" placeholder="English curatorial title" value="${esc(i.enTitle)}">
-              <textarea class="d-analysis" placeholder="从策展角度解析这幅画（线上展厅/打印用）">${esc(i.analysis)}</textarea>
-            </div>
           </div>
         </div>`;
       }).join("");
@@ -298,10 +294,6 @@
         });
         const ta=card.querySelector(".story");
         ta.oninput=function(){it.story=ta.value;debouncedSave();};
-        card.querySelector("[data-toggle]").onclick=function(){card.classList.toggle("open");};
-        const t=card.querySelector(".d-title"); t.oninput=function(){it.title=t.value;debouncedSave();};
-        const e=card.querySelector(".d-en"); e.oninput=function(){it.enTitle=e.value;debouncedSave();};
-        const an=card.querySelector(".d-analysis"); an.oninput=function(){it.analysis=an.value;debouncedSave();};
       });
     }
     function focusStory(id){setTimeout(function(){const c=gallery.querySelector('.card[data-id="'+id+'"] .story');if(c){c.focus();c.scrollIntoView({behavior:"smooth",block:"center"});}},60);}
@@ -316,7 +308,7 @@
         <div class="bookitem">
           <img src="${i.img||PLACEHOLDER}">
           <div class="t">
-            <div class="ti">${i.title?esc(i.title):"（未起名）"}</div>
+            <div class="ti">${i.title?esc(i.title):"可可的画 · "+esc(i.date)}</div>
             <div class="st">${i.story?esc(i.story).slice(0,40):"（还没写故事）"}</div>
           </div>
         </div>`).join(""):'<div class="empty">还没有收进书里的作品～<br>去「画册」点 ❤️ 收进书里 吧。</div>';
@@ -409,16 +401,13 @@
     function buildPrint(booklet){
       const sel=items.filter(i=>st(i)==="selected").sort((a,b)=>a.date.localeCompare(b.date));
       if(!sel.length){alert("还没有「收进书里」的作品哦～ 先去「画册」点 ❤️ 收进书里");return false;}
-      const includeC=curationChk.checked;
       printArea.className="print-area"+(booklet?" booklet":"");
       printArea.innerHTML=sel.map((i,idx)=>`
         <div class="print-page">
           <div class="print-headbook">Coco's Book · 可可的书</div>
           <div class="print-img"><img src="${i.img||PLACEHOLDER}"></div>
           <div class="print-caption">
-            ${includeC && i.enTitle?`<div class="print-en">${esc(i.enTitle)}</div>`:''}
             ${i.title?`<div class="print-title">${esc(i.title)}</div>`:''}
-            ${includeC && i.analysis?`<div class="print-analysis">${esc(i.analysis)}</div>`:''}
             <div class="print-story">${i.story?esc(i.story):'<span class="muted">（可可还没讲这个故事）</span>'}</div>
           </div>
           <div class="print-foot">第 ${idx+1} 页 · ${i.date}</div>
@@ -469,9 +458,5 @@
 })();
 </script>
 
-<nav class="bottom">
-  <button data-page="home" class="on"><span class="ic">🖼</span>画册</button>
-  <button data-page="book"><span class="ic">📖</span>我的书</button>
-</nav>
 </body>
 </html>
