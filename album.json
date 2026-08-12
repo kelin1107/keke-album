@@ -6,6 +6,8 @@
     "owner": "可可（3-4岁）",
     "updated": "2026-08-12",
     "curationPrompt": "从策展的角度来看这幅画，但不要过于抽象",
+    "liveUrl": "https://kelin1107.github.io/keke-album/",
+    "deploy": "GitHub Pages：仓库 kelin1107/keke-album，源=main 分支根目录。本地改完 git push 即更新线上。数据存浏览器 localStorage——用户需在页面内自行上传图片/导入 JSON；换设备不互通。",
     "note": "本文件是布布老师维护的『真相源』。家长在 index.html 里筛选/打字后，可把结果贴给布布老师，由老师把最终入选作品+故事+策展解析烘焙进此处，并据此产出统一风格的打印稿。"
   },
   "items": [
