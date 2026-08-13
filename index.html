@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>可可的书 · 线上画册</title>
-<script src="https://unpkg.com/heic2any@0.0.4/dist/heic2any.min.js" onerror="window.__heicFailed=true"></script>
+<!-- 不再外链 heic2any：GitHub Pages 的 CSP 禁止 unsafe-eval，该库内部触发 eval 会导致整页 JS 崩溃。HEIC 请先发给我转码，或用手机「存储为图像」导出 JPG 后再上传。 -->
 <style>
   :root{
     --paper:#f6f5f0; --paper-2:#edece5; --ink:#1F1F1F; --muted:#6e6b63;
@@ -323,11 +323,10 @@
     }
 
     // ---------- 加图 ----------
+    // 因 GitHub Pages CSP 禁止 unsafe-eval，外链 heic2any 会导致整页崩溃，
+    // 故不在客户端转 HEIC。若选中 HEIC，提示用户改用 JPG 或先发给我转码。
     async function convertHeic(file){
-      if(typeof heic2any==="undefined"){throw new Error("HEIC 库未加载（请保持联网）");}
-      const r=await heic2any({blob:file,toType:"image/jpeg",quality:0.9});
-      const blob=Array.isArray(r)?r[0]:r;
-      return new File([blob],(file.name||"image").replace(/\.heic$/i,".jpg"),{type:"image/jpeg"});
+      throw new Error("HEIC 格式请先用手机「存储为图像」导出为 JPG，或直接把原图发给我，我转好再帮你导入。");
     }
     function processImage(file, cb){
       const reader=new FileReader();
