@@ -48,7 +48,8 @@
   .storetag small{display:block;font-weight:400;font-size:12px;opacity:.9;margin-top:3px;}
   .story{width:100%;border:1px solid var(--line);border-radius:10px;padding:12px;font-family:var(--font);font-size:15px;color:var(--ink);background:var(--paper);min-height:64px;line-height:1.6;resize:vertical;}
   .story:focus{outline:none;border-color:var(--navy);}
-  .story-label{font-size:12px;color:var(--muted);}
+  .story-label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;align-items:center;}
+.danger{font-size:12px;color:var(--red);background:none;border:none;padding:0;cursor:pointer;text-decoration:underline;}
   .morelink{font-size:13px;color:var(--navy);background:none;border:none;cursor:pointer;padding:2px 0;text-align:left;}
   .details{display:none;flex-direction:column;gap:8px;border-top:1px dashed var(--line);padding-top:10px;margin-top:2px;}
   .card.open .details{display:flex;}
@@ -166,11 +167,12 @@
     <button class="printBtn" id="printBtn">🖨 打印这本书</button>
     <div class="booklist" id="bookList"></div>
     <details class="more">
-      <summary>更多（展厅 · 备份 · 导入）</summary>
+      <summary>更多（展厅 · 备份 · 导入 · 清空）</summary>
       <div class="row">
         <button class="mini" id="viewBtn">🔍 线上展厅</button>
         <button class="mini" id="exportBtn">⬇ 备份</button>
         <button class="mini" id="importBtn">⬆ 导入</button>
+        <button class="mini" id="clearBtn" style="color:var(--red);">🗑 清空全部</button>
       </div>
     </details>
   </main>
@@ -269,7 +271,7 @@
           <div class="body">
             <div class="date">📅 ${i.date}</div>
             ${action}
-            <div class="story-label">可可讲的故事（照她说的写，跟画对不对得上都行）</div>
+            <div class="story-label">可可讲的故事（照她说的写，跟画对不对得上都行）<button class="danger" data-act="delete" data-id="${i.id}">删除这张</button></div>
             <textarea class="story" data-id="${i.id}" placeholder="可可说…">${esc(i.story)}</textarea>
           </div>
         </div>`;
@@ -290,6 +292,7 @@
             if(a==="select"){it.status="selected";save();render();focusStory(id);}
             else if(a==="ignore"){it.status="ignored";save();render();}
             else if(a==="undo"){it.status="new";save();render();}
+            else if(a==="delete"){if(confirm("确定删除这张吗？")){items=items.filter(x=>x.id!==id);save();render();renderBook();}}
           };
         });
         const ta=card.querySelector(".story");
@@ -391,12 +394,16 @@
           </div>
         </div>`).join("");
     }
+    document.getElementById("clearBtn").addEventListener("click",function(){
+      if(confirm("确定清空手机里所有作品吗？此操作不可恢复，建议先点「备份」存个 JSON。")){items=[];save();render();renderBook();}
+    });
     document.getElementById("viewBtn").addEventListener("click",function(){
       curationMode=true;document.getElementById("home").style.display="none";document.getElementById("book").style.display="none";
       curationView.classList.add("active");buildCuration();window.scrollTo(0,0);
     });
 
     // ---------- 打印 ----------
+    const isInAppBrowser=/MicroMessenger|QQ\//i.test(navigator.userAgent);
     function buildPrint(booklet){
       const sel=items.filter(i=>st(i)==="selected").sort((a,b)=>a.date.localeCompare(b.date));
       if(!sel.length){alert("还没有「收进书里」的作品哦～ 先去「画册」点 ❤️ 收进书里");return false;}
@@ -414,14 +421,23 @@
       return true;
     }
     function doPrint(booklet){
+      if(isInAppBrowser){
+        document.getElementById("printOverlay").classList.remove("show");
+        alert("微信/QQ 内无法直接打印。请点右上角「⋯」→「在浏览器打开」，用 Safari 或 Chrome 打开本页后再点「打印这本书」。");
+        return;
+      }
       if(!buildPrint(booklet))return;
       document.getElementById("printOverlay").classList.remove("show");
       window.onafterprint=function(){window.location.reload();};
-      window.print();
+      setTimeout(function(){window.print();},50);
     }
     document.getElementById("printBtn").addEventListener("click",function(){
       const n=items.filter(i=>st(i)==="selected").length;
       document.getElementById("printCountTip").textContent="共 "+n+" 张入选作品";
+      if(isInAppBrowser){
+        alert("微信/QQ 内无法直接打印。\n请点右上角「⋯」→「在浏览器打开」，用 Safari/Chrome 打开后再打印。");
+        return;
+      }
       document.getElementById("printOverlay").classList.add("show");
     });
     document.getElementById("optA4").addEventListener("click",function(){doPrint(false);});
